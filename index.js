@@ -49,9 +49,18 @@ app.delete('/api/delete/:id',(request,response)=>{
 
 })
 app.post('/api/persons',(request,response)=>{
+    if(!request.body.name){
+      return  response.status(406).json({error:"Name is Required"})
+    }
+    if(!request.body.number){
+       return  response.status(406).json({error:"Number is required"})
+    }
+    const checker = data.find((data)=>data.name===request.body.name)
+    if(checker){
+        return response.status(409).json({error:"name is already in the list"})
+    }
     const ids = data.map((data)=>data.id)
     const mid = Math.max(...ids)
-    console.log(mid)
     const newId = Math.floor(Math.random()*((mid+5)-mid)+mid)
     const newperson = {...request.body,id:newId}
     data.push(newperson)
