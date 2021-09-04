@@ -24,13 +24,22 @@ const morgan = require('morgan')
 const express = require('express')
 const { response } = require('express')
 const app = express()
-app.use(morgan('tiny'))
 app.use(express.json())
+morgan.token('data',(request,response)=>{
+    return request.method==='POST' && JSON.stringify(request.body)
+})
+app.use(morgan((token, request, response) => {
+    return [
+      token.method(request, response),
+      token.url(request, response),
+      token.status(request, response),
+      token.res(request, response, 'content-length'), '-',
+      token['response-time'](request, response), 'ms',
+      token.data(request, response)
+    ].join(' ')
+  }))
 app.get('/api/persons',(request,response)=>{
     response.json(data)
-})
-morgan.token('/api/persons',(request,response)=>{
-    return request.hostname
 })
 app.get('/info',(request,response)=>{
     const len = data.length
@@ -39,9 +48,7 @@ app.get('/info',(request,response)=>{
     response.send(`The server has currently ${len} no of contacts <br/>
     ${date} ${timezone}`)
 })
-morgan.token('/info',(request,response)=>{
-    return request.hostname
-})
+
 app.get('/api/persons/:id',(request,response)=>{
     const id = parseInt(request.params.id)
     const contact = data.find((data)=>data.id ===id)
@@ -50,9 +57,7 @@ app.get('/api/persons/:id',(request,response)=>{
     }
     response.json(contact)
 })
-morgan.token('/api/persons/:id',(request,response)=>{
-    return request.hostname
-})
+
 app.delete('/api/delete/:id',(request,response)=>{
     const id = parseInt(request.params.id)
     data = data.filter((data)=>data.id!==id)
