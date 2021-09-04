@@ -1,28 +1,7 @@
-let data = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
 const morgan = require('morgan')
 const express = require('express')
 const { response } = require('express')
+const PhoneBook = require('./models/phonebook')
 const cors = require('cors')
 const app = express()
 app.use(express.json())
@@ -41,14 +20,17 @@ app.use(morgan((token, request, response) => {
     ].join(' ')
   }))
 app.get('/api/persons',(request,response)=>{
-    response.json(data)
+    PhoneBook.find({}).then(books=>{
+        response.json(books.map(book=>book))
+    })
 })
 app.get('/info',(request,response)=>{
-    const len = data.length
     const date = new Date()
     const timezone = date.getTimezoneOffset()
-    response.send(`The server has currently ${len} no of contacts <br/>
-    ${date} ${timezone}`)
+    PhoneBook.find({}).then(book=>{
+        response.send(`The server has currently ${book.length} no of contacts <br/>
+        ${date} ${timezone}`)
+})
 })
 
 app.get('/api/persons/:id',(request,response)=>{
@@ -73,16 +55,18 @@ app.post('/api/persons',(request,response)=>{
     if(!request.body.number){
        return  response.status(406).json({error:"Number is required"})
     }
-    const checker = data.find((data)=>data.name===request.body.name)
-    if(checker){
-        return response.status(409).json({error:"name is already in the list"})
-    }
-    const ids = data.map((data)=>data.id)
-    const mid = Math.max(...ids)
-    const newId = Math.floor(Math.random()*((mid+20)-mid)+mid)
-    const newperson = {...request.body,id:newId}
-    data.push(newperson)
-    response.status(200).json(newperson)
+    const newperson = new PhoneBook({
+        name:request.body.name,
+        number:request.body.number
+    })
+    newperson.save().then((result)=>{
+        console.log(result)
+        response.status(200).json(newperson)
+    }).catch((error)=>{
+        console.log(error)
+        response.status(500).send('Sorry coulnt save')
+    })   
+    
 
 
 })
