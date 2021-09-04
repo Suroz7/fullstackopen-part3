@@ -23,8 +23,10 @@ let data = [
 const morgan = require('morgan')
 const express = require('express')
 const { response } = require('express')
+const cors = require('cors')
 const app = express()
 app.use(express.json())
+app.use(cors())
 morgan.token('data',(request,response)=>{
     return request.method==='POST' && JSON.stringify(request.body)
 })
@@ -34,7 +36,6 @@ app.use(morgan((token, request, response) => {
       token.url(request, response),
       token.status(request, response),
       token.res(request, response, 'content-length'), '-',
-      token['response-time'](request, response), 'ms',
       token.data(request, response)
     ].join(' ')
   }))
@@ -77,14 +78,14 @@ app.post('/api/persons',(request,response)=>{
     }
     const ids = data.map((data)=>data.id)
     const mid = Math.max(...ids)
-    const newId = Math.floor(Math.random()*((mid+5)-mid)+mid)
+    const newId = Math.floor(Math.random()*((mid+20)-mid)+mid)
     const newperson = {...request.body,id:newId}
     data.push(newperson)
     response.status(200).json(newperson)
 
 
 })
-const PORT = 3001
+const PORT = process.env.PORT||3001
 app.listen(PORT,()=>{
     console.log(`Server Running on port ${PORT}`)
 })
