@@ -20,6 +20,7 @@ let data = [
       "number": "39-23-6423122"
     }
 ]
+const { request } = require('express')
 const express = require('express')
 const app = express()
 app.get('/api/persons',(request,response)=>{
@@ -31,6 +32,14 @@ app.get('/info',(request,response)=>{
     const timezone = date.getTimezoneOffset()
     response.send(`The server has currently ${len} no of contacts <br/>
     ${date} ${timezone}`)
+})
+app.get('/api/persons/:id',(request,response)=>{
+    const id = parseInt(request.params.id)
+    const contact = data.find((data)=>data.id ===id)
+    if(!contact){
+        response.status(404).send('The Person for given id is not found')
+    }
+    response.json(contact)
 })
 const PORT = 3001
 app.listen(PORT,()=>{
