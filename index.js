@@ -23,6 +23,7 @@ let data = [
 const { request } = require('express')
 const express = require('express')
 const app = express()
+app.use(express.json())
 app.get('/api/persons',(request,response)=>{
     response.json(data)
 })
@@ -45,6 +46,17 @@ app.delete('/api/delete/:id',(request,response)=>{
     const id = parseInt(request.params.id)
     data = data.filter((data)=>data.id!==id)
     response.status(200).json(data)
+
+})
+app.post('/api/persons',(request,response)=>{
+    const ids = data.map((data)=>data.id)
+    const mid = Math.max(...ids)
+    console.log(mid)
+    const newId = Math.floor(Math.random()*((mid+5)-mid)+mid)
+    const newperson = {...request.body,id:newId}
+    data.push(newperson)
+    response.status(200).json(newperson)
+
 
 })
 const PORT = 3001
