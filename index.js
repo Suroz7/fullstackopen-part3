@@ -25,6 +25,13 @@ const app = express()
 app.get('/api/persons',(request,response)=>{
     response.json(data)
 })
+app.get('/info',(request,response)=>{
+    const len = data.length
+    const date = new Date()
+    const timezone = date.getTimezoneOffset()
+    response.send(`The server has currently ${len} no of contacts <br/>
+    ${date} ${timezone}`)
+})
 const PORT = 3001
 app.listen(PORT,()=>{
     console.log(`Server Running on port ${PORT}`)
