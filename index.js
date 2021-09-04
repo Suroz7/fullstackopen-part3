@@ -41,6 +41,12 @@ app.get('/api/persons/:id',(request,response)=>{
     }
     response.json(contact)
 })
+app.delete('/api/delete/:id',(request,response)=>{
+    const id = parseInt(request.params.id)
+    data = data.filter((data)=>data.id!==id)
+    response.status(200).json(data)
+
+})
 const PORT = 3001
 app.listen(PORT,()=>{
     console.log(`Server Running on port ${PORT}`)
