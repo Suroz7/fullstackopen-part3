@@ -79,6 +79,8 @@ app.put('/api/persons/:id',(request,response)=>{
         book.name=request.body.name
         book.number=request.body.number
         book.save()
+        .then(res=>response.status(400).send('No added'))
+        .catch(error=>next(error))
     })
     .catch(err=>{
         return response.status(404).send('Not Found')
