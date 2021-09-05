@@ -12,10 +12,13 @@ mongoose.connect(url)
 const phoneBookschema = new mongoose.Schema({
     name:{
         type:String,
-        unique:true
+        unique:true,
+        required:true
     },
     number:{
         type:Number,
+        min: 8,
+        required:true
     }
 })
 phoneBookschema.plugin(uniquevalidator)

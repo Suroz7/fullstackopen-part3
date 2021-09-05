@@ -60,6 +60,7 @@ app.post('/api/persons',(request,response,next)=>{
     if(!request.body.number){
        return  response.status(406).json({error:"Number is required"})
     }
+    console.log(request.body.number.length)
     const newperson = new PhoneBook({
         name:request.body.name,
         number:request.body.number
@@ -89,7 +90,7 @@ app.listen(PORT,()=>{
     console.log(`Server Running on port ${PORT}`)
 })
 const errorHandler = (error,request,response,next)=>{
-    // console.log(error.name,'hello')
+    console.log(error.name,'hello')
     if(error.name==='CastError'){
         return response.status(400).send({error:'Not valid ID'})
     }
@@ -101,7 +102,7 @@ const errorHandler = (error,request,response,next)=>{
     }
     else if (error.name==='ValidationError'){
         
-        return response.status(500).send({error:`Name must be unique`})
+        return response.status(406).send({error:`${error.message}`})
     }
     
     next(error)
