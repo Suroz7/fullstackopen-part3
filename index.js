@@ -9,7 +9,7 @@ app.use(express.json())
 app.use(cors())
 app.use(express.static('build'))
 morgan.token('data',(request,response)=>{
-    return request.method==='POST' && JSON.stringify(request.body)
+    return request.method==='POST'||request.method==='PUT' && JSON.stringify(request.body)
 })
 app.use(morgan((token, request, response) => {
     return [
@@ -71,8 +71,21 @@ app.post('/api/persons',(request,response,next)=>{
         response.status(200).json(result)
     }).catch(error=>next(error))
     
-
-
+})
+app.put('/api/persons/:id',(request,response)=>{
+    const id = request.params.id
+    console.log(id)
+    console.log(request.body.name,request.body.number)
+    PhoneBook.findById(id)
+    .then(book=>{
+        book.name=request.body.name
+        book.number=request.body.number
+        book.save()
+    })
+    .catch(err=>{
+        return response.status(404).send('Not Found')
+    })
+    
 })
 const PORT = process.env.PORT||3001
 app.listen(PORT,()=>{
