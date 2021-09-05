@@ -36,12 +36,11 @@ app.get('/info',(request,response)=>{
 })
 
 app.get('/api/persons/:id',(request,response)=>{
-    const id = parseInt(request.params.id)
-    const contact = data.find((data)=>data.id ===id)
-    if(!contact){
-        response.status(404).send('The Person for given id is not found')
-    }
-    response.json(contact)
+    const id = request.params.id
+    PhoneBook.findById(id)
+    .then(book=>response.status(200).json(book))
+    .catch(err=>response.status(404).send('Not Found'))
+    
 })
 
 app.delete('/api/delete/:id',(request,response,next)=>{
