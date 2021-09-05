@@ -3,7 +3,6 @@ const express = require('express')
 const { response } = require('express')
 const PhoneBook = require('./models/phonebook')
 const cors = require('cors')
-
 const app = express()
 app.use(express.json())
 app.use(cors())
@@ -20,7 +19,6 @@ app.use(morgan((token, request, response) => {
       token.data(request, response)
     ].join(' ')
   }))
-
 app.get('/api/persons',(request,response)=>{
     PhoneBook.find({}).then(books=>{
         response.json(books.map(book=>book))
@@ -91,7 +89,7 @@ app.listen(PORT,()=>{
     console.log(`Server Running on port ${PORT}`)
 })
 const errorHandler = (error,request,response,next)=>{
-    console.log(error.messgae)
+    // console.log(error.name,'hello')
     if(error.name==='CastError'){
         return response.status(400).send({error:'Not valid ID'})
     }
@@ -100,6 +98,10 @@ const errorHandler = (error,request,response,next)=>{
     }
     else if(error.messgae==='ValidationError'){
         return response.status(400).send({error:error.message})
+    }
+    else if (error.name==='ValidationError'){
+        
+        return response.status(500).send({error:`Name must be unique`})
     }
     
     next(error)
