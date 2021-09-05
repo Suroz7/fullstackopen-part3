@@ -90,7 +90,6 @@ app.listen(PORT,()=>{
     console.log(`Server Running on port ${PORT}`)
 })
 const errorHandler = (error,request,response,next)=>{
-    console.log(error.name,'hello')
     if(error.name==='CastError'){
         return response.status(400).send({error:'Not valid ID'})
     }
