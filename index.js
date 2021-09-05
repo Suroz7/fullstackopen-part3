@@ -70,16 +70,14 @@ app.post('/api/persons',(request,response,next)=>{
     }).catch(error=>next(error))
     
 })
-app.put('/api/persons/:id',(request,response)=>{
+app.put('/api/persons/:id',(request,response,next)=>{
     const id = request.params.id
-    console.log(id)
-    console.log(request.body.name,request.body.number)
     PhoneBook.findById(id)
     .then(book=>{
         book.name=request.body.name
         book.number=request.body.number
         book.save()
-        .then(res=>response.status(400).send('No added'))
+        .then(res=>response.status(200).send({error:res}))
         .catch(error=>next(error))
     })
     .catch(err=>{
